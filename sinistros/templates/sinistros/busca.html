@@ -1,0 +1,19 @@
+{% extends "sinistros/base.html" %}
+
+{% block titulo %}Busca{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+  <div>
+    <h1>Resultados para “{{ termo }}”</h1>
+    <p>{{ resultados|length }} processo(s) encontrado(s).</p>
+  </div>
+  <a class="botao leve" href="{% url 'inicio' %}">← Voltar</a>
+</div>
+
+{% include "sinistros/_tabela.html" with processos=resultados vazio="Nenhum processo encontrado. Confira o número do protocolo ou cadastre um novo." %}
+
+{% if not resultados %}
+<p style="margin-top:16px"><a class="botao" href="{% url 'novo_processo' %}">+ Cadastrar processo</a></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "sinistros/base.html" %}
+{% load static %}
+
+{% block titulo %}Entrar{% endblock %}
+
+{# Substituímos o bloco "pagina" inteiro: o login não tem o topo do sistema #}
+{% block pagina %}
+<div class="login">
+  <section class="login-marca">
+    <img src="{% static 'sinistros/img/orbis-logo.png' %}" alt="Orbis — Gestão integrada de sinistros">
+    <p>Sinistros em um só lugar: cadastro, regulação, análise e atendimento, cada um com sua fila.</p>
+    <div class="rodape">Orbis · projeto de estudo</div>
+  </section>
+
+  <section class="login-form">
+    {# csrf_token: proteção obrigatória do Django em todo formulário POST #}
+    <form method="post">
+      {% csrf_token %}
+      <h2>Bem-vinda de volta</h2>
+      <p class="sub">Entre com seu usuário para continuar.</p>
+
+      {% if form.errors %}
+        <div class="alerta-erro">Usuário ou senha incorretos. Tente novamente.</div>
+      {% endif %}
+
+      <div class="campo">
+        <label for="id_username">Usuário</label>
+        <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" autofocus required autocomplete="username">
+      </div>
+      <div class="campo">
+        <label for="id_password">Senha</label>
+        <input type="password" name="password" id="id_password" required autocomplete="current-password">
+      </div>
+      {# "next" leva a pessoa de volta para a página que ela tentou abrir antes do login #}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="botao destaque cheio" type="submit">Entrar</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

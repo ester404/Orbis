@@ -1,0 +1,40 @@
+{% comment %}
+  Pedaço reaproveitável: a tabela de processos.
+  Outras páginas usam com {% include "sinistros/_tabela.html" with processos=... %}
+  (o "_" no nome é só uma convenção para "não é página inteira").
+  Com compacto=True esconde Tipo e Responsável (usado na "Minha mesa").
+{% endcomment %}
+<div class="tabela-caixa">
+  <table>
+    <thead>
+      <tr>
+        <th>Protocolo</th>
+        <th>Associado</th>
+        <th>Placa</th>
+        {% if not compacto %}<th>Tipo</th>{% endif %}
+        <th>Etapa</th>
+        <th>Subsetor</th>
+        {% if not compacto %}<th>Responsável</th>{% endif %}
+        <th>Prazo</th>
+        <th>Situação</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in processos %}
+      <tr>
+        <td><a class="protocolo" href="{% url 'detalhe_processo' p.pk %}">{{ p.protocolo }}</a></td>
+        <td>{{ p.associado }}</td>
+        <td>{{ p.placa }}</td>
+        {% if not compacto %}<td>{{ p.get_tipo_display }}</td>{% endif %}
+        <td><span class="etapa">{{ p.get_etapa_display }}</span></td>
+        <td>{{ p.subsetor }}</td>
+        {% if not compacto %}<td>{{ p.responsavel|default:"—" }}</td>{% endif %}
+        <td>{{ p.prazo|date:"d/m/Y"|default:"—" }}</td>
+        <td>{% include "sinistros/_situacao.html" with s=p.situacao_prazo %}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="9" class="vazio">{{ vazio|default:"Nenhum processo encontrado." }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

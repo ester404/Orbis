@@ -1,0 +1,44 @@
+{% extends "sinistros/base.html" %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+  <div>
+    <h1>{{ titulo }}</h1>
+    <p>Campos com * são obrigatórios. Os documentos são anexados na próxima tela.</p>
+  </div>
+</div>
+
+<form class="cartao" method="post" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="alerta-erro">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+
+  <h2>Identificação</h2>
+  <div class="form-grade">
+    {% include "sinistros/_campo.html" with campo=form.protocolo %}
+    {% include "sinistros/_campo.html" with campo=form.associado %}
+    {% include "sinistros/_campo.html" with campo=form.placa %}
+  </div>
+
+  <h2>Evento</h2>
+  <div class="form-grade">
+    {% include "sinistros/_campo.html" with campo=form.tipo %}
+    {% include "sinistros/_campo.html" with campo=form.data_evento %}
+    {% include "sinistros/_campo.html" with campo=form.descricao classe="largo" %}
+  </div>
+
+  <h2>Encaminhamento</h2>
+  <div class="form-grade">
+    {% include "sinistros/_campo.html" with campo=form.subsetor %}
+    {% include "sinistros/_campo.html" with campo=form.responsavel %}
+    {% include "sinistros/_campo.html" with campo=form.prazo %}
+    {% include "sinistros/_campo.html" with campo=form.pendencia %}
+  </div>
+
+  <div class="acoes">
+    <a class="botao leve" href="{% if processo %}{% url 'detalhe_processo' processo.pk %}{% else %}{% url 'inicio' %}{% endif %}">Cancelar</a>
+    <button class="botao destaque" type="submit">Salvar</button>
+  </div>
+</form>
+{% endblock %}

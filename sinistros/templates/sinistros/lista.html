@@ -1,0 +1,44 @@
+{% extends "sinistros/base.html" %}
+
+{% block titulo %}Processos{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+  <div>
+    <h1>Todos os processos</h1>
+    <p>Visão geral do departamento. Clique num contador para filtrar.</p>
+  </div>
+  <a class="botao" href="{% url 'novo_processo' %}">+ Cadastrar processo</a>
+</div>
+
+{# Os contadores são links que colocam ?situacao=... na URL #}
+<section class="contadores">
+  <a class="contador atrasado" href="?situacao=atrasado"><div class="numero">{{ contagem.atrasado }}</div><div class="rotulo">Atrasados</div></a>
+  <a class="contador vence_hoje" href="?situacao=vence_hoje"><div class="numero">{{ contagem.vence_hoje }}</div><div class="rotulo">Vencem hoje</div></a>
+  <a class="contador no_prazo" href="?situacao=no_prazo"><div class="numero">{{ contagem.no_prazo }}</div><div class="rotulo">No prazo</div></a>
+  <a class="contador sem_prazo" href="?situacao=sem_prazo"><div class="numero">{{ contagem.sem_prazo }}</div><div class="rotulo">Sem prazo</div></a>
+  <a class="contador concluido" href="?situacao=concluido"><div class="numero">{{ contagem.concluido }}</div><div class="rotulo">Concluídos</div></a>
+</section>
+
+<form class="filtros" method="get">
+  <select name="etapa" aria-label="Etapa">
+    <option value="">Todas as etapas</option>
+    {% for valor, nome in etapas %}
+      <option value="{{ valor }}" {% if filtros.etapa == valor %}selected{% endif %}>{{ nome }}</option>
+    {% endfor %}
+  </select>
+  <select name="subsetor" aria-label="Subsetor">
+    <option value="">Todos os subsetores</option>
+    {% for s in subsetores %}
+      {# stringformat transforma o id (número) em texto para comparar com o filtro #}
+      <option value="{{ s.id }}" {% if filtros.subsetor == s.id|stringformat:"s" %}selected{% endif %}>{{ s.nome }}</option>
+    {% endfor %}
+  </select>
+  <input type="hidden" name="situacao" value="{{ filtros.situacao }}">
+  <button class="botao" type="submit">Filtrar</button>
+  <a class="botao leve" href="{% url 'lista_processos' %}">Limpar</a>
+</form>
+
+{% include "sinistros/_tabela.html" %}
+<p style="color: var(--cinza); font-size:.88rem">{{ processos|length }} processo(s)</p>
+{% endblock %}

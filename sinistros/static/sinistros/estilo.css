@@ -1,0 +1,334 @@
+/* =====================================================================
+   PALETA DO ORBIS (Grafite + ciano do logo) — troque só os valores aqui e o sistema inteiro muda.
+   Os nomes são "de função" (escuro, primária, destaque...), não de cor,
+   assim dá para trocar a paleta sem precisar renomear nada.
+   ===================================================================== */
+:root {
+  /* Marca */
+  --escuro: #101216;            /* topo, lateral do login */
+  --primaria: #23272e;          /* botões principais */
+  --primaria-media: #3a414c;    /* hover, links, foco */
+  --destaque: #22c7e0;          /* botão de ação, detalhes */
+  --destaque-escuro: #0b8aa0;    /* também usado em textos/links sobre fundo claro */
+  --sobre-destaque: #06141a;     /* cor do texto em cima do destaque (ciano é claro, então texto escuro) */
+
+  /* Textos sobre o fundo escuro */
+  --sobre-escuro: #eceef1;
+  --sobre-escuro-suave: #c3c8cf;
+  --sobre-escuro-apagado: #8b929c;
+
+  /* Fundo claro */
+  --fundo: #f3f4f6;
+  --cartao: #ffffff;
+  --suave: #e8eaed;             /* botão leve, etiqueta de etapa */
+  --suave-hover: #dcdfe3;
+  --linha: #f7f8f9;             /* cabeçalho de tabela, caixas de envio */
+  --texto: #1b1e23;
+  --cinza: #646b75;
+  --borda: #dfe2e6;
+
+  /* Situação (semáforo) — mantenha cores bem diferentes entre si */
+  --st-atrasado: #c62828;
+  --st-hoje: #d9822b;
+  --st-prazo: #2e8b6e;
+  --st-sem: #8a979a;
+  --st-concluido: #4a6f86;
+
+  --raio: 12px;
+  --sombra: 0 1px 2px color-mix(in srgb, var(--escuro) 6%, transparent),
+            0 4px 16px color-mix(in srgb, var(--escuro) 5%, transparent);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Manrope", system-ui, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  font-size: 15px;
+}
+
+a { color: var(--primaria-media); }
+h1, h2, h3 { letter-spacing: -.01em; }
+
+/* =====================================================================
+   LOGIN
+   ===================================================================== */
+.login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+}
+.login-marca {
+  background:
+    radial-gradient(circle at 35% 42%, color-mix(in srgb, var(--destaque) 16%, transparent), transparent 55%),
+    radial-gradient(color-mix(in srgb, var(--sobre-escuro-suave) 7%, transparent) 1px, transparent 1px) 0 0 / 22px 22px,
+    var(--escuro);
+  color: var(--sobre-escuro);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 48px 8vw;
+  position: relative;
+  overflow: hidden;
+}
+.login-marca::after {
+  /* faixa vermelha na borda, detalhe da identidade visual */
+  content: ""; position: absolute; right: 0; top: 0; bottom: 0;
+  width: 4px; background: var(--destaque);
+}
+.login-marca img {
+  width: min(440px, 100%); height: auto;
+  margin: 0 0 24px -12px;
+}
+.login-marca h1 { font-size: 2.8rem; margin: 0 0 8px; color: #fff; font-weight: 800; }
+.login-marca h1 span { color: var(--destaque); }
+.login-marca p { color: var(--sobre-escuro-suave); max-width: 380px; line-height: 1.6; margin: 0; }
+.login-marca .rodape { position: absolute; bottom: 24px; left: 8vw; font-size: .8rem; color: var(--sobre-escuro-apagado); }
+
+.login-form {
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 24px; background: var(--cartao);
+}
+.login-form form { width: 100%; max-width: 340px; }
+.login-form h2 { margin: 0 0 4px; font-size: 1.6rem; }
+.login-form .sub { color: var(--cinza); margin: 0 0 28px; }
+
+@media (max-width: 820px) {
+  .login { grid-template-columns: 1fr; }
+  .login-marca { padding: 40px 24px; min-height: auto; align-items: center; text-align: center; }
+  .login-marca::after { top: auto; left: 0; height: 4px; width: auto; }
+  .login-marca img { width: min(300px, 90%); margin: 0 auto 8px; }
+  .login-marca h1 { font-size: 1.6rem; }
+  .login-marca .rodape { display: none; }
+}
+
+/* =====================================================================
+   CAMPOS E BOTÕES (usados no sistema todo)
+   ===================================================================== */
+label { display: block; font-size: .85rem; font-weight: 700; margin-bottom: 6px; }
+input[type=text], input[type=password], input[type=search], input[type=date],
+select, textarea {
+  width: 100%; font: inherit; color: var(--texto);
+  border: 1px solid var(--borda); border-radius: 10px;
+  padding: 10px 12px; background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--primaria-media);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primaria-media) 15%, transparent);
+}
+.campo { margin-bottom: 16px; }
+.campo .ajuda { color: var(--cinza); font-size: .8rem; margin-top: 4px; }
+.campo .erro, .erro { color: var(--st-atrasado); font-size: .85rem; margin-top: 4px; }
+.alerta-erro {
+  background: #fdecec; color: var(--st-atrasado); border-radius: 10px;
+  padding: 10px 12px; margin-bottom: 16px; font-size: .9rem;
+}
+
+.botao {
+  display: inline-flex; align-items: center; gap: 6px; justify-content: center;
+  background: var(--primaria); color: #fff; border: 0; border-radius: 10px;
+  padding: 10px 18px; font: inherit; font-weight: 700; cursor: pointer;
+  text-decoration: none; transition: background .15s;
+}
+.botao:hover { background: var(--primaria-media); }
+.botao.destaque { background: var(--destaque); color: var(--sobre-destaque); }
+.botao.destaque:hover { background: var(--destaque-escuro); }
+.botao.leve { background: var(--suave); color: var(--primaria); }
+.botao.leve:hover { background: var(--suave-hover); }
+.botao.pequeno { padding: 6px 12px; font-size: .85rem; }
+.botao.cheio { width: 100%; }
+.botao.perigo { background: transparent; color: var(--st-atrasado); padding: 6px 8px; }
+
+/* =====================================================================
+   TOPO DO SISTEMA
+   ===================================================================== */
+.topo {
+  background: var(--escuro);
+  border-bottom: 3px solid var(--destaque);
+  color: var(--sobre-escuro);
+  position: sticky; top: 0; z-index: 10;
+}
+.topo-dentro {
+  max-width: 1240px; margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; gap: 20px;
+}
+.marca { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 800; white-space: nowrap; }
+.marca img { width: 38px; height: 38px; }
+.marca span { letter-spacing: .18em; font-weight: 800; }
+.marca b { color: var(--destaque); }
+
+.menu { display: flex; gap: 4px; }
+.menu a {
+  color: var(--sobre-escuro-suave); text-decoration: none; padding: 8px 12px;
+  border-radius: 8px; font-weight: 600; font-size: .92rem;
+}
+.menu a:hover, .menu a.ativo { background: rgba(255, 255, 255, .08); color: #fff; }
+
+.busca-topo { flex: 1; max-width: 360px; margin-left: auto; }
+.busca-topo input {
+  background: rgba(255, 255, 255, .08); border-color: transparent; color: #fff;
+  padding: 8px 12px;
+}
+.busca-topo input::placeholder { color: var(--sobre-escuro-apagado); }
+.busca-topo input:focus { background: rgba(255, 255, 255, .14); box-shadow: none; border-color: var(--primaria-media); }
+
+.usuario { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+.usuario .nome { font-size: .9rem; text-align: right; line-height: 1.2; }
+.usuario .nome small { display: block; color: var(--sobre-escuro-apagado); font-size: .75rem; }
+.sino {
+  position: relative; display: grid; place-items: center;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255, 255, 255, .08); color: #fff; text-decoration: none; font-size: 1.05rem;
+}
+.sino .bolinha {
+  position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px;
+  padding: 0 5px; border-radius: 999px; background: var(--destaque);
+  font-size: .72rem; font-weight: 800; display: grid; place-items: center; color: var(--sobre-destaque);
+}
+.topo form { margin: 0; }
+.sair { background: none; border: 0; color: var(--sobre-escuro-suave); font: inherit; cursor: pointer; font-size: .88rem; }
+.sair:hover { color: #fff; }
+
+@media (max-width: 900px) {
+  .topo-dentro { flex-wrap: wrap; gap: 10px; }
+  .busca-topo { order: 5; flex-basis: 100%; max-width: none; }
+  .usuario .nome { display: none; }
+}
+
+/* =====================================================================
+   CONTEÚDO
+   ===================================================================== */
+main { max-width: 1240px; margin: 0 auto; padding: 24px 16px 48px; }
+.cabecalho { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.cabecalho h1 { margin: 0; font-size: 1.55rem; }
+.cabecalho p { margin: 4px 0 0; color: var(--cinza); }
+
+.cartao {
+  background: var(--cartao); border: 1px solid var(--borda);
+  border-radius: var(--raio); padding: 20px; box-shadow: var(--sombra);
+  margin-bottom: 16px;
+}
+.cartao h2 { margin: 0 0 14px; font-size: 1.05rem; }
+.cartao-titulo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.cartao-titulo h2 { margin: 0; }
+
+.mensagem {
+  background: #e3f3ed; color: #1d6b52; border-radius: 10px;
+  padding: 10px 14px; margin-bottom: 16px; font-weight: 600;
+}
+
+/* ---- Busca grande do início ---- */
+.busca-grande {
+  background:
+    radial-gradient(color-mix(in srgb, var(--sobre-escuro-suave) 8%, transparent) 1px, transparent 1px) 0 0 / 20px 20px,
+    linear-gradient(120deg, var(--escuro), var(--primaria));
+  border-radius: var(--raio); padding: 28px; color: #fff; margin-bottom: 20px;
+}
+.busca-grande h1 { margin: 0 0 4px; font-size: 1.5rem; }
+.busca-grande p { margin: 0 0 18px; color: var(--sobre-escuro-suave); }
+.busca-grande form { display: flex; gap: 8px; max-width: 620px; }
+.busca-grande input { font-size: 1.05rem; padding: 12px 14px; border: 0; }
+
+/* ---- Contadores ---- */
+.contadores {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+.contador {
+  background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio);
+  padding: 14px 16px; text-decoration: none; color: var(--texto);
+  border-top: 4px solid var(--cor); box-shadow: var(--sombra);
+}
+.contador:hover { border-color: var(--cor); }
+.contador .numero { font-size: 1.9rem; font-weight: 800; color: var(--cor); line-height: 1.1; }
+.contador .rotulo { color: var(--cinza); font-size: .85rem; font-weight: 600; }
+
+.atrasado   { --cor: var(--st-atrasado); }
+.vence_hoje { --cor: var(--st-hoje); }
+.no_prazo   { --cor: var(--st-prazo); }
+.sem_prazo  { --cor: var(--st-sem); }
+.concluido  { --cor: var(--st-concluido); }
+
+.etiqueta {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: .76rem; font-weight: 800; color: #fff; background: var(--cor, var(--st-sem));
+  white-space: nowrap;
+}
+.etapa { display: inline-block; padding: 3px 10px; border-radius: 6px; background: var(--suave); color: var(--primaria); font-size: .8rem; font-weight: 700; }
+
+/* ---- Filtros ---- */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.filtros select { flex: 1 1 180px; width: auto; }
+
+/* ---- Tabela ---- */
+.tabela-caixa { background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio); overflow-x: auto; box-shadow: var(--sombra); }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+th { background: var(--linha); color: var(--cinza); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--linha); }
+td a.protocolo { font-weight: 800; color: var(--primaria); text-decoration: none; }
+td a.protocolo:hover { color: var(--destaque-escuro); }
+.vazio { text-align: center; color: var(--cinza); padding: 36px 16px; white-space: normal; }
+
+/* ---- Duas colunas (início e detalhe) ---- */
+.grade { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
+.grade > * { min-width: 0; } /* deixa a tabela rolar dentro da caixa em vez de empurrar a lateral */
+@media (max-width: 960px) { .grade { grid-template-columns: 1fr; } }
+
+/* ---- Formulário em grade ---- */
+.form-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 18px; }
+.form-grade .largo { grid-column: 1 / -1; }
+.acoes { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+
+/* ---- Detalhe ---- */
+.dados { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px 24px; margin: 0; }
+.dados dt { color: var(--cinza); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.dados dd { margin: 3px 0 0; font-weight: 700; }
+.descricao { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--borda); white-space: pre-line; line-height: 1.55; }
+
+.anexos { list-style: none; padding: 0; margin: 0 0 16px; }
+.anexos li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--borda); }
+.anexos li:last-child { border-bottom: 0; }
+.icone-arquivo {
+  flex: 0 0 42px; height: 42px; border-radius: 8px; display: grid; place-items: center;
+  font-size: .7rem; font-weight: 800; text-transform: uppercase; color: #fff; background: var(--primaria-media);
+}
+.icone-arquivo.pdf { background: #c0392b; }
+.icone-arquivo.img { background: var(--st-concluido); }
+.anexos .info { flex: 1; min-width: 0; }
+.anexos .info a { font-weight: 700; text-decoration: none; color: var(--texto); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.anexos .info a:hover { color: var(--destaque-escuro); }
+.anexos .info small { color: var(--cinza); }
+.anexos .botoes { display: flex; gap: 4px; align-items: center; }
+.anexos form { margin: 0; }
+.envio { background: var(--linha); border: 1px dashed var(--sobre-escuro-suave); border-radius: 10px; padding: 14px; }
+.envio input[type=file] { width: 100%; font: inherit; font-size: .85rem; margin-bottom: 12px; color: var(--cinza); }
+.envio input[type=file]::file-selector-button {
+  font: inherit; font-weight: 700; border: 0; border-radius: 8px; margin-right: 10px;
+  padding: 8px 12px; background: var(--primaria); color: #fff; cursor: pointer;
+}
+.lista-simples a { text-decoration: none; color: var(--primaria); }
+.lista-simples a:hover { color: var(--destaque-escuro); }
+
+.linha-tempo { list-style: none; padding: 0; margin: 0; }
+.linha-tempo li { position: relative; padding: 0 0 18px 22px; border-left: 2px solid var(--borda); margin-left: 6px; }
+.linha-tempo li:last-child { border-left-color: transparent; }
+.linha-tempo li::before {
+  content: ""; position: absolute; left: -7px; top: 3px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--primaria-media);
+  box-shadow: 0 0 0 3px #fff;
+}
+.linha-tempo li:first-child::before { background: var(--destaque); }
+.linha-tempo .texto { line-height: 1.45; }
+.linha-tempo .quando { color: var(--cinza); font-size: .8rem; margin-top: 2px; }
+
+.lista-simples { list-style: none; margin: 0; padding: 0; }
+.lista-simples li { padding: 10px 0; border-bottom: 1px solid var(--borda); display: flex; justify-content: space-between; gap: 8px; }
+.lista-simples li:last-child { border-bottom: 0; }
+.lista-simples small { color: var(--cinza); }
+
+/* Na tela inicial, os "recentes" viram uma grade de cartõezinhos */
+.recentes { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 24px; }
+.recentes li:last-child { border-bottom: 1px solid var(--borda); }

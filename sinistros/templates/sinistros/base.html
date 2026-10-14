@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Início{% endblock %} · Orbis</title>
+  <link rel="icon" href="{% static 'sinistros/img/favicon.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'sinistros/estilo.css' %}">
+</head>
+<body>
+{# "base.html" é o molde: as outras páginas "estendem" ele e só preenchem os blocos #}
+{% block pagina %}
+  <header class="topo">
+    <div class="topo-dentro">
+      <a class="marca" href="{% url 'inicio' %}">
+        <img src="{% static 'sinistros/img/orbis-simbolo.png' %}" alt="">
+        <span>O<b>R</b>BIS</span>
+      </a>
+
+      {# request.resolver_match.url_name = nome da página atual → marca o menu ativo #}
+      {% with atual=request.resolver_match.url_name %}
+      <nav class="menu">
+        <a href="{% url 'inicio' %}" class="{% if atual == 'inicio' %}ativo{% endif %}">Início</a>
+        <a href="{% url 'lista_processos' %}" class="{% if atual == 'lista_processos' %}ativo{% endif %}">Processos</a>
+        <a href="{% url 'novo_processo' %}" class="{% if atual == 'novo_processo' %}ativo{% endif %}">+ Cadastrar</a>
+        {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+      </nav>
+      {% endwith %}
+
+      <form class="busca-topo" action="{% url 'buscar' %}" method="get">
+        <input type="search" name="q" placeholder="Buscar protocolo, placa ou associado…" aria-label="Buscar">
+      </form>
+
+      <div class="usuario">
+        {# O "sininho": contador vem do context processor (sinistros/context_processors.py) #}
+        <a class="sino" href="{% url 'inicio' %}" title="Meus processos em aberto">
+          🔔{% if mesa_total %}<span class="bolinha">{{ mesa_total }}</span>{% endif %}
+        </a>
+        <div class="nome">
+          {{ user.get_full_name|default:user.username }}
+          <small>{% if eu %}{{ eu.subsetor }} · {{ eu.get_papel_display }}{% else %}Sem subsetor{% endif %}</small>
+        </div>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="sair" type="submit">Sair</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% for m in messages %}<div class="mensagem">{{ m }}</div>{% endfor %}
+    {% block conteudo %}{% endblock %}
+  </main>
+{% endblock %}
+</body>
+</html>

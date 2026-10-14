@@ -1,0 +1,101 @@
+{% extends "sinistros/base.html" %}
+
+{% block titulo %}{{ processo.protocolo }}{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+  <div>
+    <p style="margin:0 0 4px"><a href="{% url 'inicio' %}">← Início</a></p>
+    <h1>Protocolo {{ processo.protocolo }}</h1>
+    <p>
+      <span class="etapa">{{ processo.get_etapa_display }}</span>
+      {% include "sinistros/_situacao.html" with s=processo.situacao_prazo %}
+    </p>
+  </div>
+  <a class="botao leve" href="{% url 'editar_processo' processo.pk %}">Editar dados</a>
+</div>
+
+<div class="grade">
+  {# ------------------------------ Coluna principal ------------------------------ #}
+  <div>
+    <section class="cartao">
+      <h2>Dados do processo</h2>
+      <dl class="dados">
+        <div><dt>Associado</dt><dd>{{ processo.associado }}</dd></div>
+        <div><dt>Placa</dt><dd>{{ processo.placa }}</dd></div>
+        <div><dt>Tipo de evento</dt><dd>{{ processo.get_tipo_display }}</dd></div>
+        <div><dt>Data do evento</dt><dd>{{ processo.data_evento|date:"d/m/Y"|default:"—" }}</dd></div>
+        <div><dt>Subsetor</dt><dd>{{ processo.subsetor }}</dd></div>
+        <div><dt>Responsável</dt><dd>{{ processo.responsavel|default:"—" }}</dd></div>
+        <div><dt>Prazo</dt><dd>{{ processo.prazo|date:"d/m/Y"|default:"—" }}</dd></div>
+        <div><dt>Pendência</dt><dd>{{ processo.pendencia|default:"Nenhuma" }}</dd></div>
+        <div><dt>Cadastrado</dt><dd>{{ processo.criado_em|date:"d/m/Y H:i" }}{% if processo.criado_por %} por {{ processo.criado_por }}{% endif %}</dd></div>
+      </dl>
+      {% if processo.descricao %}<div class="descricao">{{ processo.descricao }}</div>{% endif %}
+    </section>
+
+    <section class="cartao">
+      <h2>Histórico</h2>
+      <form method="post" style="margin-bottom:18px">
+        {% csrf_token %}
+        <input type="hidden" name="acao" value="anotacao">
+        {% include "sinistros/_campo.html" with campo=form_anotacao.texto %}
+        <button class="botao pequeno" type="submit">Registrar anotação</button>
+      </form>
+
+      <ul class="linha-tempo">
+        {% for m in movimentacoes %}
+        <li>
+          <div class="texto">{{ m.descricao }}</div>
+          <div class="quando">{{ m.criado_em|date:"d/m/Y H:i" }} · {{ m.autor|default:"sistema" }} · {{ m.get_etapa_display }}</div>
+        </li>
+        {% empty %}
+        <li><div class="texto" style="color:var(--cinza)">Nenhuma movimentação ainda.</div></li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+
+  {# ------------------------------ Coluna lateral: documentos ------------------------------ #}
+  <aside class="cartao">
+    <h2>Documentos ({{ anexos|length }})</h2>
+
+    <ul class="anexos">
+      {% for a in anexos %}
+      <li>
+        {# A cor do ícone muda conforme o tipo do arquivo #}
+        <div class="icone-arquivo {% if a.extensao == 'pdf' %}pdf{% elif a.extensao in 'jpg jpeg png webp' %}img{% endif %}">{{ a.extensao }}</div>
+        <div class="info">
+          <a href="{% url 'baixar_anexo' a.pk %}" target="_blank" title="{{ a.nome_arquivo }}">{{ a.nome_arquivo }}</a>
+          <small>{{ a.get_tipo_documento_display }} · {{ a.enviado_por|default:"—" }} · {{ a.enviado_em|date:"d/m H:i" }}</small>
+          {% if a.observacao %}<br><small>{{ a.observacao }}</small>{% endif %}
+        </div>
+        <div class="botoes">
+          <a class="botao leve pequeno" href="{% url 'baixar_anexo' a.pk %}?baixar=1" title="Baixar">⬇</a>
+          {% if pode_excluir_anexo %}
+          <form method="post" action="{% url 'excluir_anexo' a.pk %}" onsubmit="return confirm('Excluir este documento? Isso não pode ser desfeito.')">
+            {% csrf_token %}
+            <button class="botao perigo" type="submit" title="Excluir">✕</button>
+          </form>
+          {% endif %}
+        </div>
+      </li>
+      {% empty %}
+      <li style="color:var(--cinza)">Nenhum documento anexado ainda.</li>
+      {% endfor %}
+    </ul>
+
+    {# enctype="multipart/form-data" é OBRIGATÓRIO para enviar arquivos #}
+    <form class="envio" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="anexo">
+      <label for="{{ form_anexo.arquivo.id_for_label }}">Anexar documento</label>
+      {{ form_anexo.arquivo }}
+      {% for erro in form_anexo.arquivo.errors %}<div class="erro" style="margin:-6px 0 10px">{{ erro }}</div>{% endfor %}
+      {% include "sinistros/_campo.html" with campo=form_anexo.tipo_documento %}
+      {% include "sinistros/_campo.html" with campo=form_anexo.observacao %}
+      <button class="botao destaque cheio" type="submit">Enviar documento</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}

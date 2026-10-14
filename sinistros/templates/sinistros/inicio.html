@@ -1,0 +1,59 @@
+{% extends "sinistros/base.html" %}
+
+{% block titulo %}Início{% endblock %}
+
+{% block conteudo %}
+<section class="busca-grande">
+  <h1>Olá, {{ user.first_name|default:user.username }}!</h1>
+  <p>Digite o protocolo para abrir o processo direto. Também funciona com placa ou nome do associado.</p>
+  <form action="{% url 'buscar' %}" method="get">
+    <input type="search" name="q" placeholder="Ex: 2026100001" autofocus aria-label="Protocolo">
+    <button class="botao destaque" type="submit">Buscar</button>
+  </form>
+</section>
+
+<div class="cabecalho">
+  <div>
+    <h1>Minha mesa</h1>
+    <p>Processos sob sua responsabilidade que ainda não foram concluídos.</p>
+  </div>
+  <a class="botao" href="{% url 'novo_processo' %}">+ Cadastrar processo</a>
+</div>
+
+<section class="contadores">
+  <div class="contador atrasado"><div class="numero">{{ contagem.atrasado }}</div><div class="rotulo">Atrasados</div></div>
+  <div class="contador vence_hoje"><div class="numero">{{ contagem.vence_hoje }}</div><div class="rotulo">Vencem hoje</div></div>
+  <div class="contador no_prazo"><div class="numero">{{ contagem.no_prazo }}</div><div class="rotulo">No prazo</div></div>
+  <div class="contador sem_prazo"><div class="numero">{{ contagem.sem_prazo }}</div><div class="rotulo">Sem prazo definido</div></div>
+</section>
+
+<div>
+  <div style="margin-bottom:16px">
+    {% if eu %}
+      {% include "sinistros/_tabela.html" with processos=meus compacto=True vazio="Nenhum processo com você agora. 🎉" %}
+    {% else %}
+      <div class="cartao">Seu usuário ainda não está ligado a um subsetor. Peça para a supervisão cadastrar você em <strong>Admin → Colaboradores</strong>.</div>
+    {% endif %}
+  </div>
+
+  <section class="cartao">
+    <div class="cartao-titulo">
+      <h2>Cadastrados recentemente</h2>
+      <a href="{% url 'lista_processos' %}">Ver todos</a>
+    </div>
+    <ul class="lista-simples recentes">
+      {% for p in ultimos %}
+      <li>
+        <div>
+          <a class="protocolo" href="{% url 'detalhe_processo' p.pk %}"><strong>{{ p.protocolo }}</strong></a><br>
+          <small>{{ p.associado }} · {{ p.placa }}</small>
+        </div>
+        <small>{{ p.criado_em|timesince }}</small>
+      </li>
+      {% empty %}
+      <li><small>Nenhum processo ainda.</small></li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

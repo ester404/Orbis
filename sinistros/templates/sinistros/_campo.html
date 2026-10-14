@@ -1,0 +1,7 @@
+{# Desenha um campo de formulário com rótulo, ajuda e erros. Uso: {% include "sinistros/_campo.html" with campo=form.placa %} #}
+<div class="campo {{ classe }}">
+  <label for="{{ campo.id_for_label }}">{{ campo.label }}{% if campo.field.required %} *{% endif %}</label>
+  {{ campo }}
+  {% if campo.help_text %}<div class="ajuda">{{ campo.help_text }}</div>{% endif %}
+  {% for erro in campo.errors %}<div class="erro">{{ erro }}</div>{% endfor %}
+</div>
